@@ -24,9 +24,7 @@ module.exports = {
     async mqttRequestHandler(req, res) {
         const userId = req.userId;
         const topic = BASETOPIC + userId;
-        console.log(topic);
-        console.log(JSON.stringify(req.body));
-        await client.publish("TESTE", JSON.stringify(req.body));
+        await client.publish(topic, JSON.stringify(req.body));
         return res.json("Ok");
     },  
     async getRecentByMoteId(req,res){
