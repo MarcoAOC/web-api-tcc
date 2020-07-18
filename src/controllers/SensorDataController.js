@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 const SensorData = mongoose.model('SensorData');
 const Mote = mongoose.model('Mote');
-
+const crypto = require('crypto');
 
 const BASETOPIC = process.env.BASE_TOPIC;
 const mqtt = require('mqtt');
 options={
-    clientId:"mqttjs01",
+    clientId:'CLIENT_' + crypto.randomBytes(16).toString('hex'),
     username:process.env.MQTT_USER,
-    password:process.env.MQTT_PASSWD,
-    port:80
+    password:process.env.MQTT_PASSWD
 };
 var client = mqtt.connect(process.env.URL_MQTT,options);
 
