@@ -3,9 +3,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const requireDir = require('require-dir');
-
+const cors = require('cors')
 //App start
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 //DB start
