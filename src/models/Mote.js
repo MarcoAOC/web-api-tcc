@@ -6,7 +6,7 @@ const MoteSchema = new mongoose.Schema({
         type: String,
     },
     moteNetId: {
-        type: String,
+        type: Number,
         required: true
     },
     userId:{

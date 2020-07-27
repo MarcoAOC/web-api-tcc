@@ -30,17 +30,18 @@ module.exports = {
     async getRecentByMoteId(req,res){
         const userId = req.userId;
         const moteId = req.params.moteid;
-        const motes = await Mote.find({
+        const mote = await Mote.findOne({
             "userId" : userId,
             "moteNetId": moteId
         });
-        if(motes.length<=0){
+        if(motes==null){
             return res.status(400).json({ error: "Mote not founded" })
         }
 
         const sensorData = await SensorData.findOne(
             {
-                "moteNetId": moteId
+                "moteNetId": mote.moteNetId,
+                "userId":userId
             }
         ).sort({ created_at: 'asc', _id: -1 });
         return res.json(sensorData)
