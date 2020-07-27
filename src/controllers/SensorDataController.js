@@ -34,7 +34,7 @@ module.exports = {
             "userId" : userId,
             "moteNetId": moteId
         });
-        if(motes==null){
+        if(mote==null){
             return res.status(400).json({ error: "Mote not founded" })
         }
 
