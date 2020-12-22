@@ -3,9 +3,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const requireDir = require("require-dir");
+const cors = require("cors");
 //App start
 const app = express();
-//app.use(cros());
+var corsOptions = {
+  origin: "application-tcc.herokuapp.com",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.json());
 //DB start
