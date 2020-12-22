@@ -7,7 +7,7 @@ const cors = require("cors");
 //App start
 const app = express();
 var corsOptions = {
-  origin: "application-tcc.herokuapp.com",
+  origin: "https://application-tcc.herokuapp.com",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
