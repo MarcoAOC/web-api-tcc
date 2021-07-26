@@ -5,6 +5,7 @@ const crypto = require('crypto');
 
 const BASETOPIC = process.env.BASE_TOPIC;
 const mqtt = require('mqtt');
+
 options={
     clientId:'CLIENT_' + crypto.randomBytes(16).toString('hex'),
     username:process.env.MQTT_USER,
@@ -27,9 +28,26 @@ module.exports = {
         await client.publish(topic, JSON.stringify(req.body));
         return res.json("Ok");
     },  
+    async createSensorData(req, res) {
+        const userId = req.userId;
+        const { sensors, actuators, moteNetId, createdAt } = req.body;
+    
+        const sensorData = await SensorData.create({
+          sensors,
+          actuators,
+          moteNetId,
+          userId,
+          createdAt
+        });
+        return res.json(sensorData)
+    },
+    async deleteAll(req,res){
+        await SensorData.remove({moteNetId:1})
+        return res.status(200)
+    },
     async getRecentByMoteId(req,res){
         const userId = req.userId;
-        const moteId = req.params.moteid;
+        const moteId = req.params.moteId;
         const mote = await Mote.findOne({
             "userId" : userId,
             "moteNetId": moteId
@@ -43,7 +61,31 @@ module.exports = {
                 "moteNetId": mote.moteNetId,
                 "userId":userId
             }
-        ).sort({ created_at: 'asc', _id: -1 });
+        ).sort({ createdAt: 'asc', _id: -1 });
+        return res.json(sensorData)
+    },
+    async getByDayAndByMoteId(req,res){
+        const userId = req.userId;
+        const {moteId} = req.params;
+        const {date} = req.query;
+
+        const mote = await Mote.findOne({
+            "userId" : userId,
+            "moteNetId": moteId
+        });
+        if(mote==null){
+            return res.status(400).json({ error: "Mote not founded" })
+        }
+        const sensorData = await SensorData.find(
+            {
+                "moteNetId": mote.moteNetId,
+                "userId":userId,
+                "createdAt":{
+                    $gte: new Date(`${date}T00:00:00.000Z`),
+                    $lt: new Date(`${date}T23:59:59.000Z`)
+                }
+            }
+        ).sort({ createdAt: 'asc', _id: -1 });
         return res.json(sensorData)
     }
 };

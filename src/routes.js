@@ -15,7 +15,10 @@ routes.use("/infos",authMiddleware);
 routes.get('/infos', InfoController.getQntyInfos);
 
 routes.use("/data",authMiddleware);
-routes.get("/data/:moteid",SensorDataController.getRecentByMoteId);
+routes.get("/data/:moteId",SensorDataController.getRecentByMoteId);
+routes.post("/data",SensorDataController.createSensorData);
+routes.delete("/data",SensorDataController.deleteAll);
+routes.get("/data/:moteId/byDate",SensorDataController.getByDayAndByMoteId);
 
 routes.use("/mqtt",authMiddleware);
 routes.post('/mqtt', SensorDataController.mqttRequestHandler);
