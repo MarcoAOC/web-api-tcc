@@ -67,7 +67,7 @@ module.exports = {
     async getByDayAndByMoteId(req,res){
         const userId = req.userId;
         const {moteId} = req.params;
-        const {date} = req.query;
+        const {startDate, endDate} = req.query;
 
         const mote = await Mote.findOne({
             "userId" : userId,
@@ -76,13 +76,19 @@ module.exports = {
         if(mote==null){
             return res.status(400).json({ error: "Mote not founded" })
         }
+        const parsedStartDate = new Date(startDate)
+        parsedStartDate.setHours(0,0,0,0)
+        const parsedEndDate = new Date(endDate)
+        parsedEndDate.setHours(23,59,59,0)
+        console.log(parsedStartDate.toISOString())
+        console.log(parsedEndDate.toISOString())
         const sensorData = await SensorData.find(
             {
                 "moteNetId": mote.moteNetId,
                 "userId":userId,
                 "createdAt":{
-                    $gte: new Date(`${date}T00:00:00.000Z`),
-                    $lt: new Date(`${date}T23:59:59.000Z`)
+                    $gte: parsedStartDate,
+                    $lt: parsedEndDate
                 }
             }
         ).sort({ createdAt: 'asc', _id: -1 });
