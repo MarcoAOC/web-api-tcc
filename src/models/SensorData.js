@@ -49,8 +49,8 @@ const SensorDataSchema = new mongoose.Schema({
     },
   ],
   createdAt: {
-    type: Date,
-    default: Date.now(),
+    type: Number,
+    default: new Date().getTime()
   },
 });
 

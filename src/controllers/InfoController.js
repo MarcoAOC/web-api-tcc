@@ -21,8 +21,11 @@ module.exports = {
                     "userId" : userId
                 }
             ).sort({ created_at: 'asc', _id: -1 });
-            sensorsQntty+=sensorData.sensors.length;
-            actuatorsQntty+=sensorData.actuators.length;
+            if(sensorData){
+
+                sensorsQntty+=(sensorData.sensors && sensorData.sensors.length) || 0;
+                actuatorsQntty+=(sensorData.actuators && sensorData.actuators.length) || 0;
+            }
         }
         return res.json({sensorsQntty,motesQntty,actuatorsQntty});
     }
