@@ -18,9 +18,12 @@ client.on('connect', function() {
 });
 
 client.on('message', async function(topic, message) {
-    await SensorData.create(JSON.parse(message.toString()));
+    const x = await SensorData.create(JSON.parse(message.toString()));
 });
-
+function getDateByISOString(ISOString){
+    let [y, mon, day, h, min, s, ms] = ISOString.split(/\D+/);
+    return new Date(Date.UTC(+y, --mon, +day, +h, +min, +s, +ms));
+}
 module.exports = {
     async mqttRequestHandler(req, res) {
         const userId = req.userId;
@@ -42,8 +45,10 @@ module.exports = {
         return res.json(sensorData)
     },
     async deleteAll(req,res){
-        await SensorData.remove({moteNetId:1})
-        return res.status(200)
+        const userId = req.userId;
+        console.log(userId)
+        await SensorData.deleteMany({"userId":userId})
+        return res.status(200).json("ok")
     },
     async getRecentByMoteId(req,res){
         const userId = req.userId;
@@ -76,19 +81,17 @@ module.exports = {
         if(mote==null){
             return res.status(400).json({ error: "Mote not founded" })
         }
-        const parsedStartDate = new Date(startDate)
+        const parsedStartDate = new Date(+startDate)
         parsedStartDate.setHours(0,0,0,0)
-        const parsedEndDate = new Date(endDate)
-        parsedEndDate.setHours(23,59,59,0)
-        console.log(parsedStartDate.toISOString())
-        console.log(parsedEndDate.toISOString())
+        const parsedEndDate = new Date(+endDate)
+        parsedEndDate.setHours(23,59,59,59)
         const sensorData = await SensorData.find(
             {
                 "moteNetId": mote.moteNetId,
                 "userId":userId,
                 "createdAt":{
-                    $gte: parsedStartDate,
-                    $lt: parsedEndDate
+                    $gte: parsedStartDate.getTime(),
+                    $lt: parsedEndDate.getTime()
                 }
             }
         ).sort({ createdAt: 'asc', _id: -1 });
